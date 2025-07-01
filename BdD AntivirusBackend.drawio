@@ -1,0 +1,171 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0" version="26.0.11">
+  <diagram id="0KJDrOkrG47IMkpd2mkS" name="Página-1">
+    <mxGraphModel dx="1493" dy="579" grid="1" gridSize="10" intes="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1.5" pageWidth="1100" pageHeight="1500" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="users" value="Users" style="shape=table;startSize=30;container=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" parent="1" vertex="1">
+          <mxGeometry x="190" y="200" width="350" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="users_id" value="id SERIAL PRIMARY KEY" parent="users" vertex="1">
+          <mxGeometry y="30" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="users_nombre" value="nombre VARCHAR(255) NOT NULL" parent="users" vertex="1">
+          <mxGeometry y="60" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="users_correo" value="correo VARCHAR(255) UNIQUE NOT NULL" parent="users" vertex="1">
+          <mxGeometry y="90" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="users_contraseña" value="contraseña TEXT NOT NULL" parent="users" vertex="1">
+          <mxGeometry y="120" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="users_telefono" value="telefono VARCHAR(20)" parent="users" vertex="1">
+          <mxGeometry y="150" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="users_rol" value="rol ENUM(&#39;estudiante&#39;, &#39;administrador&#39;) NOT NULL" parent="users" vertex="1">
+          <mxGeometry y="180" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="users_fecha_registro" value="fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP" parent="users" vertex="1">
+          <mxGeometry y="210" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="users_activo" value="activo BOOLEAN DEFAULT TRUE" parent="users" vertex="1">
+          <mxGeometry y="240" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="profiles" value="Profiles" style="shape=table;startSize=30;container=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" parent="1" vertex="1">
+          <mxGeometry x="630" y="200" width="430" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="profiles_id" value="id SERIAL PRIMARY KEY" parent="profiles" vertex="1">
+          <mxGeometry y="30" width="430" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="profiles_usuario_id" value="usuario_id INT REFERENCES users(id) ON DELETE CASCADE" parent="profiles" vertex="1">
+          <mxGeometry y="60" width="430" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="profiles_preferencias" value="preferencias JSONB" parent="profiles" vertex="1">
+          <mxGeometry y="90" width="430" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="profiles_biografia" value="biografia TEXT" parent="profiles" vertex="1">
+          <mxGeometry y="120" width="430" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="profiles_foto_perfil" value="foto_perfil VARCHAR(255)" parent="profiles" vertex="1">
+          <mxGeometry y="150" width="430" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_users_profiles" value="" style="edgeStyle=entityRelationEdgeStyle;endArrow=ERzeroToMany;startArrow=ERone;endFill=1;startFill=0;" parent="1" source="users" target="profiles" edge="1">
+          <mxGeometry width="100" height="100" relative="1" as="geometry" />
+          <mxPoint x="350" y="150" as="sourcePoint" />
+          <mxPoint x="400" y="150" as="targetPoint" />
+        </mxCell>
+        <mxCell id="opportunities" value="Opportunities" style="shape=table;startSize=30;container=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" parent="1" vertex="1">
+          <mxGeometry x="190" y="500" width="390" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="opportunities_id" value="id SERIAL PRIMARY KEY" parent="opportunities" vertex="1">
+          <mxGeometry y="30" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="opportunities_titulo" value="titulo VARCHAR(255) NOT NULL" parent="opportunities" vertex="1">
+          <mxGeometry y="60" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="opportunities_descripcion" value="descripcion TEXT" parent="opportunities" vertex="1">
+          <mxGeometry y="90" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="opportunities_tipo" value="tipo ENUM(&#39;beca&#39;, &#39;crédito&#39;, &#39;curso&#39;, &#39;subsidio&#39;, &#39;otro&#39;)" parent="opportunities" vertex="1">
+          <mxGeometry y="120" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="opportunities_sector" value="sector ENUM(&#39;tecnológico&#39;, &#39;social&#39;, &#39;medio ambiente&#39;, &#39;salud&#39;, &#39;otros&#39;)" parent="opportunities" vertex="1">
+          <mxGeometry y="150" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="opportunities_ubicacion" value="ubicacion VARCHAR(255)" parent="opportunities" vertex="1">
+          <mxGeometry y="180" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="opportunities_requisitos" value="requisitos TEXT" parent="opportunities" vertex="1">
+          <mxGeometry y="210" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="opportunities_beneficios" value="beneficios TEXT" parent="opportunities" vertex="1">
+          <mxGeometry y="240" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="opportunities_fecha_publicacion" value="fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP" parent="opportunities" vertex="1">
+          <mxGeometry y="270" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="opportunities_fecha_vencimiento" value="fecha_vencimiento DATE" parent="opportunities" vertex="1">
+          <mxGeometry y="300" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="opportunities_institucion" value="institucion VARCHAR(255)" parent="opportunities" vertex="1">
+          <mxGeometry y="330" width="390" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="applications" value="Applications" style="shape=table;startSize=30;container=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" parent="1" vertex="1">
+          <mxGeometry x="1100" y="245" width="440" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="applications_id" value="id SERIAL PRIMARY KEY" parent="applications" vertex="1">
+          <mxGeometry y="30" width="440" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="applications_usuario_id" value="usuario_id INT REFERENCES users(id) ON DELETE CASCADE" parent="applications" vertex="1">
+          <mxGeometry y="60" width="440" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="applications_oportunidad_id" value="oportunidad_id INT REFERENCES opportunities(id) ON DELETE CASCADE" parent="applications" vertex="1">
+          <mxGeometry y="90" width="440" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="applications_estado" value="estado ENUM(&#39;pendiente&#39;, &#39;aprobado&#39;, &#39;rechazado&#39;) DEFAULT &#39;pendiente&#39;" parent="applications" vertex="1">
+          <mxGeometry y="120" width="440" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="applications_fecha_postulacion" value="fecha_postulacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP" parent="applications" vertex="1">
+          <mxGeometry y="150" width="440" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="donations" value="Donations" style="shape=table;startSize=30;container=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" parent="1" vertex="1">
+          <mxGeometry x="1100" y="480" width="370" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="donations_id" value="id SERIAL PRIMARY KEY" parent="donations" vertex="1">
+          <mxGeometry y="30" width="370" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="donations_usuario_id" value="usuario_id INT REFERENCES users(id) ON DELETE SET NULL" parent="donations" vertex="1">
+          <mxGeometry y="60" width="370" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="donations_monto" value="monto DECIMAL(10,2) NOT NULL" parent="donations" vertex="1">
+          <mxGeometry y="90" width="370" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="donations_metodo_pago" value="metodo_pago ENUM(&#39;Wompi&#39;, &#39;PayPal&#39;, &#39;Tarjeta&#39;) NOT NULL" parent="donations" vertex="1">
+          <mxGeometry y="120" width="370" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="donations_fecha_donacion" value="fecha_donacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP" parent="donations" vertex="1">
+          <mxGeometry y="150" width="370" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="services" value="Services" style="shape=table;startSize=30;container=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" parent="1" vertex="1">
+          <mxGeometry x="680" y="640" width="290" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="services_id" value="id SERIAL PRIMARY KEY" parent="services" vertex="1">
+          <mxGeometry y="30" width="290" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="services_titulo" value="titulo VARCHAR(255) NOT NULL" parent="services" vertex="1">
+          <mxGeometry y="60" width="290" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="services_descripcion" value="descripcion TEXT" parent="services" vertex="1">
+          <mxGeometry y="90" width="290" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="services_tipo" value="tipo ENUM(&#39;asesoría&#39;, &#39;tutoría&#39;, &#39;mentoría&#39;, &#39;otros&#39;)" parent="services" vertex="1">
+          <mxGeometry y="120" width="290" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="services_disponibilidad" value="disponibilidad BOOLEAN DEFAULT TRUE" parent="services" vertex="1">
+          <mxGeometry y="150" width="290" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="messages" value="Messages" style="shape=table;startSize=30;container=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" parent="1" vertex="1">
+          <mxGeometry x="690" y="400" width="360" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="messages_id" value="id SERIAL PRIMARY KEY" parent="messages" vertex="1">
+          <mxGeometry y="30" width="360" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="messages_usuario_id" value="usuario_id INT REFERENCES users(id) ON DELETE CASCADE" parent="messages" vertex="1">
+          <mxGeometry y="60" width="360" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="messages_mensaje" value="mensaje TEXT NOT NULL" parent="messages" vertex="1">
+          <mxGeometry y="90" width="360" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="messages_tipo" value="tipo ENUM(&#39;pregunta&#39;, &#39;soporte&#39;, &#39;reporte&#39;)" parent="messages" vertex="1">
+          <mxGeometry y="120" width="360" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="messages_fecha_envio" value="fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP" parent="messages" vertex="1">
+          <mxGeometry y="150" width="360" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="messages_estado" value="estado ENUM(&#39;pendiente&#39;, &#39;respondido&#39;) DEFAULT &#39;pendiente&#39;" parent="messages" vertex="1">
+          <mxGeometry y="180" width="360" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
