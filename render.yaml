@@ -1,12 +1,10 @@
 services:
   - type: web
     name: antivirus-backend
+    runtime: dotnet-8     # <— Agregar la versión del runtime válida
     branch: main
     buildCommand: dotnet publish -c Release -o out
     startCommand: dotnet out/ProyectAntivirusBackend.dll
-    buildFilter:
-      paths:
-        - "**/*"
     autoDeploy: true
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
