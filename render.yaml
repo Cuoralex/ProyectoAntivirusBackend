@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: antivirus-backend
+    runtime: dotnet
+    branch: main
+    buildCommand: dotnet publish -c Release -o out
+    startCommand: dotnet out/ProyectAntivirusBackend.dll
+    buildFilter:
+      paths:
+        - "**/*"
+    autoDeploy: true
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: Jwt__Key
+        sync: false
+      - key: Jwt__Issuer
+        sync: false
+      - key: Jwt__Audience
+        sync: false
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
