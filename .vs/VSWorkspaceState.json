@@ -1,11 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\ProyectAntivirusBackend",
-    "\\ProyectAntivirusBackend\\Controllers",
-    "\\ProyectAntivirusBackend\\Data",
-    "\\ProyectAntivirusBackend\\Models"
+    ""
   ],
-  "SelectedNode": "\\ProyectAntivirusBackend\\Data\\ApplicationDbContext.cs",
+  "SelectedNode": "\\Controllers",
   "PreviewInSolutionExplorer": false
 }
