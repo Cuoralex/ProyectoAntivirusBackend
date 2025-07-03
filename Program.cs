@@ -147,12 +147,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// Solo migrar si se configura una variable de entorno
 if (Environment.GetEnvironmentVariable("RUN_MIGRATIONS") == "true")
 {
     using var scope = app.Services.CreateScope();
+    var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+    Console.WriteLine("CADENA DE CONEXIÓN EF:");
+    Console.WriteLine(config.GetConnectionString("DefaultConnection"));
+
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     dbContext.Database.Migrate();
 }
-
-app.Run();
