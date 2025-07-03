@@ -3,7 +3,6 @@ using Microsoft.OpenApi.Models;
 using ProyectAntivirusBackend.Data;
 using ProyectAntivirusBackend.Repositories;
 using ProyectAntivirusBackend.Services;
-using AutoMapper;
 using ProyectAntivirusBackend.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
