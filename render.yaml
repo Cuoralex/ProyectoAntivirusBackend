@@ -1,7 +1,7 @@
 services:
   - type: web
     name: antivirus-backend
-    runtime:  web service
+    runtime:  dotnet
     branch: main
     buildCommand: dotnet publish -c Release -o out
     startCommand: dotnet out/ProyectAntivirusBackend.dll
