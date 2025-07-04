@@ -21,12 +21,16 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
+            .WithOrigins(
+                "http://localhost:3000", // desarrollo local
+                "https://app-antivirus.vercel.app" // producción Vercel
+            )
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
     });
 });
+
 
 // 🔐 JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -147,7 +151,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapGet("/", () => Results.Ok("✅ API de Antivirus en funcionamiento"));
+app.MapGet("/", () => Results.Ok(" API de Antivirus en funcionamiento"));
 
 // 🛠️ Ejecutar migraciones opcionalmente (por variable de entorno)
 if (Environment.GetEnvironmentVariable("RUN_MIGRATIONS") == "true")
