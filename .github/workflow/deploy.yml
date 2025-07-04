@@ -3,7 +3,7 @@ name: Deploy ASP.NET Core to Azure
 on:
   push:
     branches:
-      - main  # o tu rama
+      - azure
 
 jobs:
   build-and-deploy:
