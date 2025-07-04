@@ -170,4 +170,17 @@ if (Environment.GetEnvironmentVariable("RUN_MIGRATIONS") == "true")
     }
 }
 
+app.MapGet("/test-db", async (ApplicationDbContext db) =>
+{
+    try
+    {
+        var result = await db.Institutions.FirstOrDefaultAsync();
+        return result != null ? Results.Ok(result) : Results.Ok("Conexión OK, pero sin instituciones.");
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"❌ Error de conexión: {ex.Message}");
+    }
+});
+
 app.Run();
