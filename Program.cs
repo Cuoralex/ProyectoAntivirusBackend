@@ -166,4 +166,6 @@ if (Environment.GetEnvironmentVariable("RUN_MIGRATIONS") == "true")
     }
 }
 
+app.MapGet("/", () => Results.Ok("API de Antivirus en funcionamiento"));
+
 app.Run();
