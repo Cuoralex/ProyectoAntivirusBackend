@@ -29,19 +29,28 @@ namespace ProyectAntivirusBackend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OpportunityDTO>>> GetOpportunity()
         {
-            var opportunities = await _context.Opportunities
-                .Include(o => o.OpportunityTypes)
-                    .ThenInclude(ot => ot.Categories)
-                .Include(o => o.Sectors)
-                .Include(o => o.Institutions)
-                .Include(o => o.Localities)
-                .ToListAsync();
+            try
+            {
+                var opportunities = await _context.Opportunities
+                    .Include(o => o.OpportunityTypes)
+                        .ThenInclude(ot => ot.Categories)
+                    .Include(o => o.Sectors)
+                    .Include(o => o.Institutions)
+                    .Include(o => o.Localities)
+                    .ToListAsync();
 
-            if (!opportunities.Any()) return NotFound();
+                if (!opportunities.Any()) return NotFound();
 
-            var opportunitiesDTO = _mapper.Map<List<OpportunityDTO>>(opportunities); // Mapear lista completa
+                var opportunitiesDTO = _mapper.Map<List<OpportunityDTO>>(opportunities);
 
-            return Ok(opportunitiesDTO);
+                return Ok(opportunitiesDTO);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($" ERROR EN GET OPPORTUNITY: {ex.Message}");
+                Console.WriteLine(ex.StackTrace);
+                return StatusCode(500, "Ocurrió un error al obtener las oportunidades.");
+            }
         }
 
         [HttpGet("opportunities.data")]
@@ -213,7 +222,7 @@ namespace ProyectAntivirusBackend.Controllers
                     OpportunityId = id,
                     Score = (int)request.Score,
                     Comment = (string)request.Comment,
-                
+
                 };
                 _context.Ratings.Add(rating);
             }

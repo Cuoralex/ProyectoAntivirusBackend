@@ -21,5 +21,9 @@ namespace ProyectAntivirusBackend.Models
 
         [Column("link")]
         public string? Link { get; set; }
+
+        [Column("information")]
+        public string? Information { get; set; }
+
     }
 }

@@ -23,7 +23,8 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(
                 "http://localhost:3000", // desarrollo local
-                "https://app-antivirus.vercel.app" // producción Vercel
+                "https://app-antivirus.vercel.app", // producción Vercel
+                "https://*vercel.app"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
