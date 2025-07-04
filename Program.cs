@@ -153,11 +153,11 @@ if (Environment.GetEnvironmentVariable("RUN_MIGRATIONS") == "true")
         using var scope = app.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         dbContext.Database.Migrate();
-        Console.WriteLine("✅ Migraciones aplicadas correctamente.");
+        Console.WriteLine("Migraciones aplicadas correctamente.");
     }
     catch (Exception ex)
     {
-        Console.WriteLine("❌ Error aplicando migraciones:");
+        Console.WriteLine("Error aplicando migraciones:");
         Console.WriteLine(ex);
     }
 }
