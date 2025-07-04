@@ -11,10 +11,11 @@ using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Console.WriteLine("Conexión detectada:");
-Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection"));
+// 📌 Mostrar conexión detectada
+Console.WriteLine("🔍 Conexión detectada:");
+Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection") ?? "❌ No se encontró la cadena de conexión.");
 
-
+// 🔐 Configurar CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -27,16 +28,14 @@ builder.Services.AddCors(options =>
     });
 });
 
-
+// 🔐 JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var keyValue = jwtSettings["Key"];
 var issuer = jwtSettings["Issuer"];
 var audience = jwtSettings["Audience"];
 
 if (string.IsNullOrEmpty(keyValue))
-{
     throw new InvalidOperationException("JWT Key no está configurada.");
-}
 
 var key = Encoding.UTF8.GetBytes(keyValue);
 
@@ -50,15 +49,14 @@ builder.Services.AddAuthentication(options =>
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>
-{
-    if (context.Request.Cookies.ContainsKey("authToken"))
-    {
-        var token = context.Request.Cookies["authToken"];
-        context.Token = token;
-    }
-    return Task.CompletedTask;
-}
-
+        {
+            if (context.Request.Cookies.ContainsKey("authToken"))
+            {
+                var token = context.Request.Cookies["authToken"];
+                context.Token = token;
+            }
+            return Task.CompletedTask;
+        }
     };
 
     options.TokenValidationParameters = new TokenValidationParameters
@@ -73,6 +71,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// 🧭 Swagger (habilitado en todos los entornos)
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "API de Antivirus", Version = "v1" });
@@ -98,17 +97,16 @@ builder.Services.AddSwaggerGen(c =>
                     Id = "Bearer"
                 }
             },
-            new string[] {}
+            Array.Empty<string>()
         }
     });
 });
 
-Console.WriteLine("🔍 Conexión detectada:");
-Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection") ?? "❌ No se encontró la cadena de conexión.");
-
+// 🗄️ Base de datos
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// 📦 Servicios y Repositorios
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<IRequestService, RequestService>();
@@ -118,6 +116,7 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<IInstitutionRepository, InstitutionRepository>();
 builder.Services.AddScoped<IInstitutionService, InstitutionService>();
 
+// 🧾 Controladores y JSON
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -130,42 +129,41 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-else
+// 🌐 Middlewares globales
+app.UseSwagger();
+app.UseSwaggerUI();
+
+if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
 app.UseCors("AllowFrontend");
-
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
 
+app.MapControllers();
+app.MapGet("/", () => Results.Ok("✅ API de Antivirus en funcionamiento"));
+
+// 🛠️ Ejecutar migraciones opcionalmente (por variable de entorno)
 if (Environment.GetEnvironmentVariable("RUN_MIGRATIONS") == "true")
 {
     try
     {
         using var scope = app.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        //dbContext.Database.Migrate();
-        Console.WriteLine("Migraciones aplicadas correctamente.");
+        //dbContext.Database.Migrate(); // Descomenta si lo necesitas
+        Console.WriteLine(" Migraciones aplicadas correctamente.");
     }
     catch (Exception ex)
     {
-        Console.WriteLine("Error aplicando migraciones:");
+        Console.WriteLine(" Error aplicando migraciones:");
         Console.WriteLine(ex);
     }
 }
-
-app.MapGet("/", () => Results.Ok("API de Antivirus en funcionamiento"));
 
 app.Run();
