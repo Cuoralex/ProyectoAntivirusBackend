@@ -11,6 +11,10 @@ using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+Console.WriteLine("Conexión detectada:");
+Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection"));
+
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
