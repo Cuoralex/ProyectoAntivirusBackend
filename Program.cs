@@ -148,11 +148,18 @@ app.MapControllers();
 
 if (Environment.GetEnvironmentVariable("RUN_MIGRATIONS") == "true")
 {
-    using var scope = app.Services.CreateScope();
-    var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-    Console.WriteLine("CADENA DE CONEXIÓN EF:");
-    Console.WriteLine(config.GetConnectionString("DefaultConnection"));
-
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    dbContext.Database.Migrate();
+    try
+    {
+        using var scope = app.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        dbContext.Database.Migrate();
+        Console.WriteLine("✅ Migraciones aplicadas correctamente.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("❌ Error aplicando migraciones:");
+        Console.WriteLine(ex);
+    }
 }
+
+app.Run();
