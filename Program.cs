@@ -160,7 +160,7 @@ if (Environment.GetEnvironmentVariable("RUN_MIGRATIONS") == "true")
     {
         using var scope = app.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        //dbContext.Database.Migrate(); // Descomenta si lo necesitas
+        dbContext.Database.Migrate(); // Descomenta si lo necesitas
         Console.WriteLine(" Migraciones aplicadas correctamente.");
     }
     catch (Exception ex)
