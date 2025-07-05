@@ -141,14 +141,13 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowFrontend"); // <= Asegúrate que esté aquí
+app.UseCors("AllowFrontend");
 app.UseRouting();
 app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapControllers();
 app.MapGet("/", () => Results.Ok(" API de Antivirus en funcionamiento"));
 
 // 🛠️ Ejecutar migraciones opcionalmente (por variable de entorno)
