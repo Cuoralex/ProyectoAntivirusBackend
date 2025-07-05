@@ -24,18 +24,25 @@ namespace ProyectAntivirusBackend.Controllers
         }
 
         [HttpGet]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<Institution>>> GetAll()
         {
-            var institutions = await _service.GetAllAsync();
-
-            return Ok(institutions);
+            try
+            {
+                var institutions = await _service.GetAllAsync();
+                return Ok(institutions);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error en InstitutionController: {ex.Message}");
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult<Institution>> Create([FromBody] Institution institution)
         {
             await _service.AddAsync(institution);
-            
+
             return CreatedAtAction(nameof(GetById), new { id = institution.Id }, institution);
         }
 
@@ -52,7 +59,8 @@ namespace ProyectAntivirusBackend.Controllers
         {
             var existing = await _service.GetByIdAsync(id);
 
-            if (existing == null) {
+            if (existing == null)
+            {
                 return NotFound();
             }
 

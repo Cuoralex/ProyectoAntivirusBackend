@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectAntivirusBackend.Data;
-using ProyectAntivirusBackend.Models;
 using ProyectAntivirusBackend.DTOs;
 using ServiceModel = ProyectAntivirusBackend.Models.Service;
 
@@ -22,21 +21,29 @@ namespace ProyectAntivirusBackend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ServiceDTO>>> GetServices()
         {
-            var services = await _context.Services
-                .Include(s => s.ServiceType)
-                .Select(s => new ServiceDTO
-                {
-                    Id = s.Id,
-                    IsActive = s.IsActive,
-                    ServiceTypeId = s.ServiceTypeId,
-                    ServiceTypeName = s.ServiceType != null ? s.ServiceType.Name : "Sin Tipo",
-                    Title = s.Title,
-                    Description = s.Description,
-                    Image = s.Image
-                })
-                .ToListAsync();
+            try
+            {
+                var services = await _context.Services
+                    .Include(s => s.ServiceType)
+                    .Select(s => new ServiceDTO
+                    {
+                        Id = s.Id,
+                        IsActive = s.IsActive,
+                        ServiceTypeId = s.ServiceTypeId,
+                        ServiceTypeName = s.ServiceType != null ? s.ServiceType.Name : "Sin Tipo",
+                        Title = s.Title,
+                        Description = s.Description,
+                        Image = s.Image
+                    })
+                    .ToListAsync();
 
-            return Ok(services);
+                return Ok(services);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("💥 Error en GetServices: " + ex.Message);
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
         }
 
         [HttpGet("{id}")]
