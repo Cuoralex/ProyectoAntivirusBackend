@@ -39,9 +39,6 @@ namespace ProyectAntivirusBackend.Controllers
             return Ok(services);
         }
 
-
-
-
         [HttpGet("{id}")]
         public async Task<ActionResult<ServiceDTO>> GetService(int id)
         {

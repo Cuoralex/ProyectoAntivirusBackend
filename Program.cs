@@ -32,8 +32,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-
-// 🔐 JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var keyValue = jwtSettings["Key"];
 var issuer = jwtSettings["Issuer"];
@@ -76,7 +74,6 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// 🧭 Swagger (habilitado en todos los entornos)
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "API de Antivirus", Version = "v1" });
@@ -143,12 +140,13 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
+app.UseCors("AllowFrontend"); // <= Asegúrate que esté aquí
 app.UseRouting();
 app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapControllers();
 
 app.MapControllers();
 app.MapGet("/", () => Results.Ok(" API de Antivirus en funcionamiento"));
