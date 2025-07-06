@@ -23,7 +23,9 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(
                 "http://localhost:3000", // desarrollo local
-                "https://app-antivirus.vercel.app" // producción Vercel
+                "http://localhost:5173",
+                "https://app-antivirus.vercel.app", // producción Vercel
+                "https://app-antivirus-ojz532dp1-cuoralexs-projects.vercel.app"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
@@ -103,11 +105,22 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// 🗄️ Base de datos
+// Base de datos
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        npgsqlOptions =>
+        {
+            npgsqlOptions.CommandTimeout(120);
+            npgsqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(10),
+                errorCodesToAdd: null
+            );
+        }));
 
-// 📦 Servicios y Repositorios
+
+// Servicios y Repositorios
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<IRequestService, RequestService>();
@@ -129,7 +142,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-// 🌐 Middlewares globales
+// Middlewares globales
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -140,6 +153,25 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.Use(async (context, next) =>
+{
+    var origin = context.Request.Headers["Origin"];
+    var allowedOrigins = new[]
+    {
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://app-antivirus.vercel.app",
+        "https://app-antivirus-ojz532dp1-cuoralexs-projects.vercel.app"
+    };
+
+    if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin.ToString()))
+    {
+        context.Response.Headers["Access-Control-Allow-Origin"] = origin;
+        context.Response.Headers["Vary"] = "Origin";
+    }
+
+    await next();
+});
 app.UseCors("AllowFrontend");
 app.UseRouting();
 app.UseCookiePolicy();
@@ -149,7 +181,7 @@ app.MapControllers();
 
 app.MapGet("/", () => Results.Ok(" API de Antivirus en funcionamiento"));
 
-// 🛠️ Ejecutar migraciones opcionalmente (por variable de entorno)
+// Ejecutar migraciones opcionalmente (por variable de entorno)
 if (Environment.GetEnvironmentVariable("RUN_MIGRATIONS") == "true")
 {
     try
@@ -175,7 +207,7 @@ app.MapGet("/test-db", async (ApplicationDbContext db) =>
     }
     catch (Exception ex)
     {
-        return Results.Problem($"❌ Error de conexión: {ex.Message}");
+        return Results.Problem($"Error de conexión: {ex.Message}");
     }
 });
 

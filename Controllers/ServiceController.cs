@@ -18,12 +18,28 @@ namespace ProyectAntivirusBackend.Controllers
             _context = context;
         }
 
+        [HttpGet("test")]
+        public async Task<IActionResult> TestConnection()
+        {
+            try
+            {
+                var count = await _context.Services.CountAsync();
+                return Ok($"Servicios disponibles: {count}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error probando conexión: " + ex.Message);
+            }
+        }
+
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ServiceDTO>>> GetServices()
         {
             try
             {
                 var services = await _context.Services
+                    .AsNoTracking()
                     .Include(s => s.ServiceType)
                     .Select(s => new ServiceDTO
                     {
@@ -41,7 +57,12 @@ namespace ProyectAntivirusBackend.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine("💥 Error en GetServices: " + ex.Message);
+                Console.WriteLine("💥 Error en GetServices:");
+                Console.WriteLine(ex.Message);
+                if (ex.InnerException != null)
+                    Console.WriteLine("➡️ Inner: " + ex.InnerException.Message);
+                Console.WriteLine(ex.StackTrace);
+
                 return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }
