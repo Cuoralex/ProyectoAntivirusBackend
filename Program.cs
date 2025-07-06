@@ -11,11 +11,11 @@ using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 📌 Mostrar conexión detectada
+// Mostrar conexión detectada
 Console.WriteLine("🔍 Conexión detectada:");
 Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection") ?? "❌ No se encontró la cadena de conexión.");
 
-// 🔐 Configurar CORS
+// Configurar CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -23,8 +23,7 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(
                 "http://localhost:3000", // desarrollo local
-                "https://app-antivirus.vercel.app", // producción Vercel
-                "https://*vercel.app"
+                "https://app-antivirus.vercel.app" // producción Vercel
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
