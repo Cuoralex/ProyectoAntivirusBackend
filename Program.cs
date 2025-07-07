@@ -100,8 +100,8 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-Console.WriteLine("🔍 Conexión detectada:");
-Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection") ?? "❌ No se encontró la cadena de conexión.");
+Console.WriteLine("Conexión detectada:");
+Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection") ?? "No se encontró la cadena de conexión.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
