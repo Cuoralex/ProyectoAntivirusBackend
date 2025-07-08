@@ -1,5 +1,5 @@
 
-![Saludo](ProyectAntivirusBackend/wwwroot/images/Antivirus.jpg)
+![Saludo](/images/Antivirus.jpg)
 
 
 # Banco de Oportunidades Estudiantiles (BOE)
