@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ProyectAntivirusBackend.Data;
 using ProyectAntivirusBackend.DTOs;
 using ProyectAntivirusBackend.Models;
+using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -53,6 +54,7 @@ namespace ProyectAntivirusBackend.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("opportunities.data")]
         public IActionResult GetOpportunities(string? title, int? opportunityTypeId, int? institutionId, int? localityId, DateTime? publicationDate, DateTime? expirationDate)
         {
