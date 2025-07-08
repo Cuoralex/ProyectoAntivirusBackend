@@ -11,12 +11,18 @@ using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 🔧 Establecer la URL antes del build para evitar el error "Collection was of a fixed size"
+builder.WebHost.UseUrls("http://localhost:5055");
+
+// Mostrar conexión en consola
 Console.WriteLine("Conexión detectada:");
 Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection") ?? "No se encontró la cadena de conexión.");
+
+// Logging en consola
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -32,6 +38,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+// JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var keyValue = jwtSettings["Key"];
 var issuer = jwtSettings["Issuer"];
@@ -55,8 +62,7 @@ builder.Services.AddAuthentication(options =>
         {
             if (context.Request.Cookies.ContainsKey("authToken"))
             {
-                var token = context.Request.Cookies["authToken"];
-                context.Token = token;
+                context.Token = context.Request.Cookies["authToken"];
             }
             return Task.CompletedTask;
         }
@@ -74,6 +80,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "API de Antivirus", Version = "v1" });
@@ -104,19 +111,20 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// DB Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         npgsqlOptions =>
         {
-            npgsqlOptions.CommandTimeout(240);
             npgsqlOptions.EnableRetryOnFailure(
                 maxRetryCount: 5,
                 maxRetryDelay: TimeSpan.FromSeconds(10),
-                errorCodesToAdd: null
+                errorCodesToAdd: Array.Empty<string>()
             );
         }));
 
+// Servicios y repositorios
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<IRequestService, RequestService>();
@@ -126,6 +134,7 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<IInstitutionRepository, InstitutionRepository>();
 builder.Services.AddScoped<IInstitutionService, InstitutionService>();
 
+// Controladores y JSON
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -136,7 +145,6 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
-app.Urls.Add("http://localhost:5055");
 
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -155,8 +163,27 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+// Endpoint raíz
 app.MapGet("/", () => Results.Ok("API de Antivirus en funcionamiento"));
 
+// Endpoint ping para probar CORS
+app.MapGet("/ping", () => Results.Ok("pong")).AllowAnonymous();
+
+// Endpoint test de DB
+app.MapGet("/test-db", async (ApplicationDbContext db) =>
+{
+    try
+    {
+        var result = await db.Institutions.FirstOrDefaultAsync();
+        return result != null ? Results.Ok(result) : Results.Ok("Conexión OK, pero sin instituciones.");
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Error de conexión: {ex.Message}");
+    }
+});
+
+// Migraciones si está activado
 if (Environment.GetEnvironmentVariable("RUN_MIGRATIONS") == "true")
 {
     try
@@ -172,20 +199,5 @@ if (Environment.GetEnvironmentVariable("RUN_MIGRATIONS") == "true")
         Console.WriteLine(ex);
     }
 }
-
-app.MapGet("/ping", () => Results.Ok("pong")).AllowAnonymous();
-
-app.MapGet("/test-db", async (ApplicationDbContext db) =>
-{
-    try
-    {
-        var result = await db.Institutions.FirstOrDefaultAsync();
-        return result != null ? Results.Ok(result) : Results.Ok("Conexión OK, pero sin instituciones.");
-    }
-    catch (Exception ex)
-    {
-        return Results.Problem($"Error de conexión: {ex.Message}");
-    }
-});
 
 app.Run();
