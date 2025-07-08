@@ -11,21 +11,20 @@ using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Mostrar conexión detectada
-Console.WriteLine("🔍 Conexión detectada:");
-Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection") ?? "❌ No se encontró la cadena de conexión.");
+Console.WriteLine("Conexión detectada:");
+Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection") ?? "No se encontró la cadena de conexión.");
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
-// Configurar CORS
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
             .WithOrigins(
-                "http://localhost:3000", // desarrollo local
                 "http://localhost:5173",
-                "https://app-antivirus.vercel.app", // producción Vercel
-                "https://app-antivirus-ojz532dp1-cuoralexs-projects.vercel.app"
+                "https://app-antivirus.vercel.app"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
@@ -105,13 +104,12 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Base de datos
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         npgsqlOptions =>
         {
-            npgsqlOptions.CommandTimeout(120);
+            npgsqlOptions.CommandTimeout(240);
             npgsqlOptions.EnableRetryOnFailure(
                 maxRetryCount: 5,
                 maxRetryDelay: TimeSpan.FromSeconds(10),
@@ -119,8 +117,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
             );
         }));
 
-
-// Servicios y Repositorios
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<IRequestService, RequestService>();
@@ -130,7 +126,6 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<IInstitutionRepository, InstitutionRepository>();
 builder.Services.AddScoped<IInstitutionService, InstitutionService>();
 
-// 🧾 Controladores y JSON
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -141,8 +136,8 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
+app.Urls.Add("http://localhost:5055");
 
-// Middlewares globales
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -153,25 +148,6 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.Use(async (context, next) =>
-{
-    var origin = context.Request.Headers["Origin"];
-    var allowedOrigins = new[]
-    {
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "https://app-antivirus.vercel.app",
-        "https://app-antivirus-ojz532dp1-cuoralexs-projects.vercel.app"
-    };
-
-    if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin.ToString()))
-    {
-        context.Response.Headers["Access-Control-Allow-Origin"] = origin;
-        context.Response.Headers["Vary"] = "Origin";
-    }
-
-    await next();
-});
 app.UseCors("AllowFrontend");
 app.UseRouting();
 app.UseCookiePolicy();
@@ -179,24 +155,25 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapGet("/", () => Results.Ok(" API de Antivirus en funcionamiento"));
+app.MapGet("/", () => Results.Ok("API de Antivirus en funcionamiento"));
 
-// Ejecutar migraciones opcionalmente (por variable de entorno)
 if (Environment.GetEnvironmentVariable("RUN_MIGRATIONS") == "true")
 {
     try
     {
         using var scope = app.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        dbContext.Database.Migrate(); // Descomenta si lo necesitas
-        Console.WriteLine(" Migraciones aplicadas correctamente.");
+        dbContext.Database.Migrate();
+        Console.WriteLine("Migraciones aplicadas correctamente.");
     }
     catch (Exception ex)
     {
-        Console.WriteLine(" Error aplicando migraciones:");
+        Console.WriteLine("Error aplicando migraciones:");
         Console.WriteLine(ex);
     }
 }
+
+app.MapGet("/ping", () => Results.Ok("pong")).AllowAnonymous();
 
 app.MapGet("/test-db", async (ApplicationDbContext db) =>
 {

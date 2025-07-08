@@ -15,11 +15,12 @@ namespace ProyectAntivirusBackend.Models
         public bool IsActive { get; set; } = true;
 
         [Required]
-        [ForeignKey("ServiceType")]
         [Column("service_type_id")]
         public int ServiceTypeId { get; set; }
 
-        public ServiceType? ServiceType { get; set; } = null!;
+        // ✅ Relación de navegación hacia ServiceType
+        [ForeignKey("ServiceTypeId")]
+        public ServiceType? ServiceType { get; set; }
 
         [Required]
         [Column("title")]
