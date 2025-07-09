@@ -91,6 +91,8 @@ namespace ProyectAntivirusBackend.Controllers
                 return BadRequest(new { error = "Fecha de nacimiento inválida." });
             }
 
+            createUserDTO.Birthdate = DateTime.SpecifyKind(createUserDTO.Birthdate, DateTimeKind.Utc);
+
             var user = _mapper.Map<User>(createUserDTO);
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(createUserDTO.Password);
