@@ -100,6 +100,7 @@ namespace ProyectAntivirusBackend.Controllers
             user.IsActive = true;
             user.Birthdate = createUserDTO.Birthdate;
 
+
             try
             {
                 _context.Users.Add(user);
