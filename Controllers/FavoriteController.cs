@@ -53,22 +53,24 @@ public class FavoriteController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateFavorite([FromBody] FavoriteDTO favoriteDto)
     {
-        if (favoriteDto == null || favoriteDto.OpportunityId == 0)
+        if (favoriteDto == null || favoriteDto.OpportunityId == 0 || favoriteDto.UserId == 0)
         {
             return BadRequest("Datos inválidos.");
         }
 
-        // Verificar si la oportunidad ya fue marcada como favorita
         var existingFavorite = await _context.Favorites
-            .FirstOrDefaultAsync(f => f.OpportunityId == favoriteDto.OpportunityId);
+            .FirstOrDefaultAsync(f =>
+                f.OpportunityId == favoriteDto.OpportunityId &&
+                f.UserId == favoriteDto.UserId);
 
         if (existingFavorite != null)
         {
-            return BadRequest("Esta oportunidad ya está marcada como favorita.");
+            return BadRequest("Esta oportunidad ya está marcada como favorita por este usuario.");
         }
 
         var favorite = new Favorite
         {
+            UserId = favoriteDto.UserId,
             OpportunityId = favoriteDto.OpportunityId
         };
 
@@ -78,26 +80,27 @@ public class FavoriteController : ControllerBase
         return CreatedAtAction(nameof(ObtenerFavoritoPorId), new { id = favorite.Id }, favorite);
     }
 
-    [HttpPost("{id}")]
-    public async Task<IActionResult> CreateFavoriteWithId(int id, [FromBody] FavoriteDTO favoriteDto)
+    [HttpPost("{userId}")]
+    public async Task<IActionResult> CreateFavoriteWithId(int userId, [FromBody] FavoriteDTO favoriteDto)
     {
         if (favoriteDto == null || favoriteDto.OpportunityId == 0)
         {
             return BadRequest("Datos inválidos.");
         }
 
-        // Verificar si el favorito ya existe para evitar duplicados
         var existingFavorite = await _context.Favorites
-            .FirstOrDefaultAsync(f => f.OpportunityId == favoriteDto.OpportunityId && f.Id == id);
+            .FirstOrDefaultAsync(f =>
+                f.OpportunityId == favoriteDto.OpportunityId &&
+                f.UserId == userId);
 
         if (existingFavorite != null)
         {
-            return BadRequest("Esta oportunidad ya está marcada como favorita.");
+            return BadRequest("Esta oportunidad ya está marcada como favorita por este usuario.");
         }
 
         var favorite = new Favorite
         {
-            UserId = id, // Asignamos el ID proporcionado en la URL
+            UserId = userId,
             OpportunityId = favoriteDto.OpportunityId
         };
 
@@ -106,7 +109,6 @@ public class FavoriteController : ControllerBase
 
         return CreatedAtAction(nameof(ObtenerFavoritoPorId), new { id = favorite.Id }, favorite);
     }
-
 
     [HttpPut("{id}")]
     public async Task<IActionResult> ActualizarFavorito(int id, [FromBody] Favorite favorite)
