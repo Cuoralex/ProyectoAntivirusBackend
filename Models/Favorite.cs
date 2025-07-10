@@ -10,6 +10,7 @@ namespace ProyectAntivirusBackend.Models
         [Column("id")]
         public int Id { get; set; }
 
+        [Required]
         [ForeignKey("User")]
         [Column("user_id")]
         public int? UserId { get; set; }

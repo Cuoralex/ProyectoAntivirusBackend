@@ -97,7 +97,7 @@ public class FavoriteController : ControllerBase
 
         var favorite = new Favorite
         {
-            Id = id, // Asignamos el ID proporcionado en la URL
+            UserId = id, // Asignamos el ID proporcionado en la URL
             OpportunityId = favoriteDto.OpportunityId
         };
 
